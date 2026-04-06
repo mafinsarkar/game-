@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>1HP×Shafin · Conqueror Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg:        #0a0c0f;
+    --bg2:       #111318;
+    --bg3:       #181c22;
+    --bg4:       #1e232b;
+    --border:    #2a2f3a;
+    --border2:   #363c4a;
+    --orange:    #FF5722;
+    --orange2:   #FF8A50;
+    --gold:      #FFB300;
+    --gold2:     #FFD54F;
+    --green:     #4CAF50;
+    --red:       #F44336;
+    --text:      #E8EAF0;
+    --text2:     #8B92A5;
+    --text3:     #5a6070;
+    --conq:      #FFD700;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 10px; }
+  .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); }
+  .logo-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+  .logo-text span { color: var(--orange); }
+  .season-badge {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--text2);
+    font-weight: 500;
+  }
+  .days-chip {
+    background: #FFB30015;
+    border: 1px solid #FFB30040;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 760px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  /* ── HERO CARD ── */
+  .hero {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 100%;
+    background: linear-gradient(90deg, transparent, #FF572208);
+    pointer-events: none;
+  }
+  .hero-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: #FF572215;
+    border: 2px solid var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 26px;
+  }
+  .hero-body { flex: 1; }
+  .hero-ign { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .hero-rp {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--orange);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .hero-tier {
+    font-size: 14px;
+    color: var(--orange2);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .hero-progress { }
+  .prog-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text2);
+    margin-bottom: 5px;
+  }
+  .prog-track {
+    height: 8px;
+    background: var(--bg4);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--orange), var(--gold));
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+  }
+  .prog-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0;
+    width: 4px; height: 100%;
+    background: #fff4;
+    border-radius: 2px;
+  }
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .rank-pill {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 6px 12px;
+    text-align: center;
+  }
+  .rank-pill-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .rank-pill-lbl { font-size: 10px; color: var(--text2); }
+  .session-chip {
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .session-chip.pos { background: #4CAF5020; color: var(--green); border: 1px solid #4CAF5040; }
+  .session-chip.neg { background: #F4433620; color: var(--red); border: 1px solid #F4433640; }
+  .session-chip.zero { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 10px;
+    text-align: center;
+  }
+  .stat-box-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-box-lbl { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+  /* ── CONQUEROR TARGET ── */
+  .target-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .target-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .target-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--conq);
+    letter-spacing: 0.5px;
+  }
+  .target-season { font-size: 11px; color: var(--text3); }
+  .target-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .tg-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .tg-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .tg-lbl { font-size: 10px; color: var(--text2); margin-top: 3px; }
+  .tg-box.highlight { border-color: #FFD70040; background: #FFD70008; }
+  .tg-box.highlight .tg-val { color: var(--gold); }
+  .conq-track { height: 10px; background: var(--bg4); border-radius: 5px; overflow: hidden; margin-bottom: 6px; }
+  .conq-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, #FF5722, #FFB300, #FFD700); transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .conq-sub { font-size: 11px; color: var(--text3); text-align: center; }
+
+  /* ── ADD MATCH FORM ── */
+  .form-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .form-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .fg { display: flex; flex-direction: column; gap: 5px; }
+  .fg label { font-size: 11px; color: var(--text2); font-weight: 500; letter-spacing: 0.3px; }
+  .fg input, .fg select {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .fg input:focus, .fg select:focus {
+    outline: none;
+    border-color: var(--orange);
+  }
+  .fg select option { background: var(--bg3); }
+  .rp-preview-row {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .rp-preview-row .lbl { color: var(--text2); }
+  .rp-preview-row .val { font-weight: 600; font-family: 'Rajdhani', sans-serif; font-size: 18px; }
+  .val.pos { color: var(--green); }
+  .val.neg { color: var(--red); }
+  .btn-log {
+    width: 100%;
+    padding: 12px;
+    background: var(--orange);
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Rajdhani', sans-serif;
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-log:hover { background: #E64A19; }
+  .btn-log:active { transform: scale(0.98); }
+
+  /* manual RP entry */
+  .manual-row {
+    display: flex; gap: 8px; margin-bottom: 10px; align-items: flex-end;
+  }
+  .manual-row .fg { flex: 1; }
+  .btn-set {
+    padding: 9px 16px;
+    background: var(--bg4);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .btn-set:hover { background: var(--bg3); }
+
+  /* ── HISTORY ── */
+  .history-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+  }
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .history-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.5px;
+  }
+  .btn-clear {
+    font-size: 12px;
+    color: var(--text3);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .btn-clear:hover { color: var(--red); background: #F4433610; }
+  .match-list { display: flex; flex-direction: column; gap: 6px; }
+  .match-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .place-badge {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .pb-1 { background: #FFD70020; color: var(--gold); border: 1px solid #FFD70040; }
+  .pb-2 { background: #78909C20; color: #90A4AE; border: 1px solid #78909C40; }
+  .pb-3 { background: #FF572220; color: var(--orange2); border: 1px solid #FF572240; }
+  .pb-top { background: #1565C020; color: #64B5F6; border: 1px solid #1565C040; }
+  .pb-out { background: var(--bg4); color: var(--text3); border: 1px solid var(--border); }
+  .match-meta { flex: 1; }
+  .match-meta-top { font-size: 13px; font-weight: 500; color: var(--text); }
+  .match-meta-sub { font-size: 11px; color: var(--text2); margin-top: 1px; }
+  .match-rp { text-align: right; }
+  .match-rp-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .match-rp-val.pos { color: var(--green); }
+  .match-rp-val.neg { color: var(--red); }
+  .match-rp-sub { font-size: 10px; color: var(--text3); margin-top: 1px; }
+  .empty-state {
+    text-align: center;
+    padding: 32px;
+    color: var(--text3);
+    font-size: 14px;
+  }
+  .empty-icon { font-size: 32px; margin-bottom: 8px; }
+
+  /* divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 14px 0;
+  }
+
+  /* responsive */
+  @media (max-width: 520px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr 1fr; }
+    .target-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .hero-rp { font-size: 34px; }
+    .topbar { flex-wrap: wrap; gap: 6px; }
+  }
+  @media (max-width: 360px) {
+    .target-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-dot"></div>
+    <div class="logo-text">1HP×<span>Shafin</span></div>
+    <div class="season-badge">Season 28 · TPP Squad</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div class="days-chip" id="daysChip">-- days left</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">🔥</div>
+    <div class="hero-body">
+      <div class="hero-ign">1HP×Shafin · Ace Dominator 15</div>
+      <div class="hero-rp" id="heroRP">0</div>
+      <div class="hero-tier">Ace Dominator → Conqueror</div>
+      <div class="hero-progress">
+        <div class="prog-labels">
+          <span>Ace Dom start</span>
+          <span id="rpGap" style="color:var(--gold)">-- RP to Conqueror</span>
+        </div>
+        <div class="prog-track">
+          <div class="prog-fill" id="progFill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="rank-pill">
+        <div class="rank-pill-val" id="serverRank">#5120</div>
+        <div class="rank-pill-lbl">Server rank</div>
+      </div>
+      <div class="session-chip zero" id="sessionChip">+0 today</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-box-val" id="stMatches">0</div>
+      <div class="stat-box-lbl">Matches today</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-val" id="stWins">0</div>
+      <div class="stat-box-lbl">Wins today</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-val" id="stKills">0</div>
+      <div class="stat-box-lbl">Kills today</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-val" id="stAvgRP">0</div>
+      <div class="stat-box-lbl">Avg RP/match</div>
+    </div>
+  </div>
+
+  <!-- CONQUEROR TARGET -->
+  <div class="target-card">
+    <div class="target-header">
+      <div class="target-title">⚔️ CONQUEROR TARGET</div>
+      <div class="target-season">Ends 2026/05/23 05:29</div>
+    </div>
+    <div class="target-grid">
+      <div class="tg-box highlight">
+        <div class="tg-val" id="tgRPNeeded">--</div>
+        <div class="tg-lbl">RP needed</div>
+      </div>
+      <div class="tg-box">
+        <div class="tg-val" id="tgDays" style="color:var(--orange2)">--</div>
+        <div class="tg-lbl">Days left</div>
+      </div>
+      <div class="tg-box">
+        <div class="tg-val" id="tgPerDay" style="color:var(--text)">--</div>
+        <div class="tg-lbl">RP/day needed</div>
+      </div>
+    </div>
+    <div class="conq-track">
+      <div class="conq-fill" id="conqFill" style="width:0%"></div>
+    </div>
+    <div class="conq-sub" id="conqSub">Loading...</div>
+  </div>
+
+  <!-- ADD MATCH -->
+  <div class="form-card">
+    <div class="form-title">LOG MATCH</div>
+
+    <!-- Manual RP set -->
+    <div class="manual-row">
+      <div class="fg">
+        <label>SET CURRENT RP (if you know exact value)</label>
+        <input type="number" id="manualRP" placeholder="e.g. 5649" min="0" max="15000" />
+      </div>
+      <button class="btn-set" onclick="setManualRP()">Update RP</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- OR log by match result -->
+    <div class="form-row">
+      <div class="fg">
+        <label>MODE</label>
+        <select id="fMode">
+          <option value="squad">Squad (TPP)</option>
+          <option value="duo">Duo (TPP)</option>
+          <option value="solo">Solo (TPP)</option>
+          <option value="squad_fpp">Squad (FPP)</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>PLACEMENT</label>
+        <input type="number" id="fPlace" value="1" min="1" max="25" />
+      </div>
+      <div class="fg">
+        <label>KILLS</label>
+        <input type="number" id="fKills" value="0" min="0" max="99" />
+      </div>
+    </div>
+    <div class="form-row-2">
+      <div class="fg">
+        <label>DAMAGE DEALT</label>
+        <input type="number" id="fDamage" value="0" min="0" />
+      </div>
+      <div class="fg">
+        <label>ACTUAL RP CHANGE (+ or -)</label>
+        <input type="number" id="fActualRP" placeholder="e.g. +8 or -5" />
+      </div>
+    </div>
+
+    <div class="rp-preview-row">
+      <span class="lbl">RP change to apply</span>
+      <span class="val pos" id="rpPreview">+0</span>
+    </div>
+
+    <button class="btn-log" onclick="logMatch()">LOG THIS MATCH</button>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-card">
+    <div class="history-header">
+      <div class="history-title">MATCH HISTORY</div>
+      <button class="btn-clear" onclick="clearHistory()">Clear all</button>
+    </div>
+    <div class="match-list" id="matchList">
+      <div class="empty-state">
+        <div class="empty-icon">🎯</div>
+        Log your first match above
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════ STATE ═══════════════ */
+const SEASON_END   = new Date('2026-05-23T05:29:00');
+const CONQ_RP_EST  = 6800;
+const BASE_SERVER_RANK = 5120;
+
+const PLACE_RP = {
+  squad:     [10,8,7,6,5,4,3,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  duo:       [12,10,8,7,6,5,4,3,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  solo:      [15,12,10,8,7,6,5,4,3,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  squad_fpp: [10,8,7,6,5,4,3,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+};
+const KILL_RP = { squad: 2, duo: 2.5, solo: 3, squad_fpp: 2 };
+
+function load(key, def) {
+  try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : def; }
+  catch { return def; }
+}
+function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
+
+let rp      = load('bgmi_rp', 5649);
+let matches = load('bgmi_matches', []);
+let sessionRP = load('bgmi_sessionRP', 0);
+let sessionDate = load('bgmi_sessionDate', '');
+
+// reset session if new day
+const today = new Date().toDateString();
+if (sessionDate !== today) {
+  sessionRP = 0;
+  sessionDate = today;
+  save('bgmi_sessionRP', 0);
+  save('bgmi_sessionDate', today);
+}
+
+/* ═══════════════ CALC ═══════════════ */
+function daysLeft() {
+  return Math.max(0, Math.ceil((SEASON_END - new Date()) / 86400000));
+}
+
+function estimateRP(mode, place, kills) {
+  const pi = Math.max(0, Math.min((place||1) - 1, 24));
+  return (PLACE_RP[mode][pi] || 0) + Math.round((kills||0) * KILL_RP[mode]);
+}
+
+function placeClass(p) {
+  if (p === 1) return 'pb-1';
+  if (p === 2) return 'pb-2';
+  if (p === 3) return 'pb-3';
+  if (p <= 10) return 'pb-top';
+  return 'pb-out';
+}
+
+function formatRP(n) { return (n >= 0 ? '+' : '') + n; }
+
+/* ═══════════════ RENDER ═══════════════ */
+function render() {
+  const days = daysLeft();
+  const rpNeeded = Math.max(0, CONQ_RP_EST - rp);
+  const conqPct  = Math.min(100, (rp / CONQ_RP_EST) * 100);
+  const rpPerDay = days > 0 ? Math.ceil(rpNeeded / days) : rpNeeded;
+  const progPct  = Math.min(100, ((rp - 5000) / (CONQ_RP_EST - 5000)) * 100);
+
+  // topbar
+  document.getElementById('daysChip').textContent = days + ' days left';
+
+  // hero
+  document.getElementById('heroRP').textContent = rp.toLocaleString();
+  document.getElementById('rpGap').textContent = rpNeeded > 0 ? rpNeeded + ' RP to Conqueror est.' : '🏆 Conqueror zone!';
+  document.getElementById('progFill').style.width = Math.max(0, progPct).toFixed(1) + '%';
+
+  // server rank estimate
+  const estRank = Math.max(500, BASE_SERVER_RANK - Math.floor((rp - 5649) / 3));
+  document.getElementById('serverRank').textContent = '#' + estRank.toLocaleString();
+
+  // session chip
+  const chip = document.getElementById('sessionChip');
+  chip.textContent = formatRP(sessionRP) + ' today';
+  chip.className = 'session-chip ' + (sessionRP > 0 ? 'pos' : sessionRP < 0 ? 'neg' : 'zero');
+
+  // stats
+  const todayMatches = matches.filter(m => m.date === today);
+  const wins  = todayMatches.filter(m => m.place === 1).length;
+  const kills = todayMatches.reduce((a, m) => a + (m.kills||0), 0);
+  const avgRP = todayMatches.length ? Math.round(todayMatches.reduce((a,m)=>a+m.rp,0)/todayMatches.length) : 0;
+  document.getElementById('stMatches').textContent = todayMatches.length;
+  document.getElementById('stWins').textContent    = wins;
+  document.getElementById('stKills').textContent   = kills;
+  document.getElementById('stAvgRP').textContent   = (avgRP >= 0 ? '+' : '') + avgRP;
+
+  // conqueror target
+  document.getElementById('tgRPNeeded').textContent = rpNeeded > 0 ? rpNeeded : '✓';
+  document.getElementById('tgDays').textContent     = days;
+  document.getElementById('tgPerDay').textContent   = rpPerDay;
+  document.getElementById('conqFill').style.width   = conqPct.toFixed(1) + '%';
+  document.getElementById('conqSub').textContent    = rpNeeded > 0
+    ? 'You are ~' + (estRank - 500).toLocaleString() + ' spots from top 500 · ~' + Math.ceil(rpNeeded/8) + ' solid matches needed'
+    : '🏆 You are in Conqueror range! Keep defending!';
+
+  // history
+  const list = document.getElementById('matchList');
+  if (!matches.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🎯</div>Log your first match above</div>`;
+    return;
+  }
+  list.innerHTML = matches.slice().reverse().map(m => `
+    <div class="match-item">
+      <div class="place-badge ${placeClass(m.place)}">#${m.place}</div>
+      <div class="match-meta">
+        <div class="match-meta-top">${m.mode.replace('_',' ').toUpperCase()} · ${m.kills} kills · ${m.damage} dmg</div>
+        <div class="match-meta-sub">${m.time} · ${m.date === today ? 'Today' : m.date}</div>
+      </div>
+      <div class="match-rp">
+        <div class="match-rp-val ${m.rp >= 0 ? 'pos' : 'neg'}">${formatRP(m.rp)}</div>
+        <div class="match-rp-sub">${m.rpAfter.toLocaleString()} RP</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════ ACTIONS ═══════════════ */
+function setManualRP() {
+  const val = parseInt(document.getElementById('manualRP').value);
+  if (isNaN(val) || val < 0) return alert('Enter a valid RP number!');
+  const diff = val - rp;
+  rp = val;
+  sessionRP += diff;
+  save('bgmi_rp', rp);
+  save('bgmi_sessionRP', sessionRP);
+  document.getElementById('manualRP').value = '';
+  render();
+}
+
+function getActualRP() {
+  const actual = document.getElementById('fActualRP').value;
+  if (actual !== '' && actual !== null) {
+    const v = parseInt(actual);
+    if (!isNaN(v)) return v;
+  }
+  const mode   = document.getElementById('fMode').value;
+  const place  = parseInt(document.getElementById('fPlace').value) || 1;
+  const kills  = parseInt(document.getElementById('fKills').value) || 0;
+  return estimateRP(mode, place, kills);
+}
+
+function updatePreview() {
+  const rpChange = getActualRP();
+  const el = document.getElementById('rpPreview');
+  el.textContent = formatRP(rpChange) + ' RP';
+  el.className = 'val ' + (rpChange >= 0 ? 'pos' : 'neg');
+}
+
+function logMatch() {
+  const mode   = document.getElementById('fMode').value;
+  const place  = parseInt(document.getElementById('fPlace').value) || 1;
+  const kills  = parseInt(document.getElementById('fKills').value) || 0;
+  const damage = parseInt(document.getElementById('fDamage').value) || 0;
+  const rpChange = getActualRP();
+
+  rp += rpChange;
+  rp = Math.max(0, rp);
+  sessionRP += rpChange;
+
+  const match = {
+    mode, place, kills, damage,
+    rp: rpChange,
+    rpAfter: rp,
+    date: today,
+    time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+  };
+
+  matches.push(match);
+  save('bgmi_rp', rp);
+  save('bgmi_matches', matches);
+  save('bgmi_sessionRP', sessionRP);
+
+  // reset form
+  document.getElementById('fPlace').value  = '1';
+  document.getElementById('fKills').value  = '0';
+  document.getElementById('fDamage').value = '0';
+  document.getElementById('fActualRP').value = '';
+  updatePreview();
+  render();
+}
+
+function clearHistory() {
+  if (!confirm('Clear all match history?')) return;
+  matches = [];
+  save('bgmi_matches', []);
+  render();
+}
+
+// live preview
+['fMode','fPlace','fKills','fActualRP'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updatePreview);
+});
+
+// init
+updatePreview();
+render();
+</script>
+</body>
+</html>
